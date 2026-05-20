@@ -2,25 +2,11 @@ import type { Dog } from '../../types/dog'
 
 interface MainImageProps {
   dog: Dog | null
-  isLoading?: boolean
   isFavorite?: boolean
   onAddFavorite?: () => void
 }
 
-export function MainImage({
-  dog,
-  isLoading,
-  isFavorite,
-  onAddFavorite,
-}: MainImageProps) {
-  if (isLoading) {
-    return (
-      <div className="flex aspect-[4/3] w-full items-center justify-center rounded-xl bg-slate-100">
-        <p className="text-sm text-slate-500">Loading main image...</p>
-      </div>
-    )
-  }
-
+export function MainImage({ dog, isFavorite, onAddFavorite }: MainImageProps) {
   if (!dog) {
     return (
       <div className="flex aspect-[4/3] w-full items-center justify-center rounded-xl bg-slate-100">
@@ -35,6 +21,7 @@ export function MainImage({
         <img
           src={dog.imageUrl}
           alt={dog.breed}
+          loading="eager"
           className="aspect-[4/3] w-full object-cover"
         />
       </div>

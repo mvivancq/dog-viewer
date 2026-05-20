@@ -6,9 +6,6 @@ export interface DogApiResponse<T> {
 export interface Dog {
   imageUrl: string
   breed: string
-}
-
-export interface FavoriteDog extends Dog {
   id: string
 }
 

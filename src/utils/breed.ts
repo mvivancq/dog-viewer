@@ -1,6 +1,8 @@
+import type { Dog } from '../types/dog'
+
 /**
- * Extrae el nombre de la raza desde una URL de imagen de dog.ceo.
- * Ej: https://images.dog.ceo/breeds/bulldog/french/n02108915.jpg → "bulldog french"
+ * Extracts breed name from a dog.ceo image URL.
+ * e.g. https://images.dog.ceo/breeds/bulldog/french/n02108915.jpg → "bulldog french"
  */
 export function parseBreedFromImageUrl(imageUrl: string): string {
   const match = imageUrl.match(/\/breeds\/([^/]+(?:\/[^/]+)?)\//i)
@@ -9,9 +11,10 @@ export function parseBreedFromImageUrl(imageUrl: string): string {
   return match[1].replace(/\//g, ' ')
 }
 
-export function toDog(imageUrl: string) {
+export function toDog(imageUrl: string): Dog {
   return {
     imageUrl,
     breed: parseBreedFromImageUrl(imageUrl),
+    id: imageUrl,
   }
 }

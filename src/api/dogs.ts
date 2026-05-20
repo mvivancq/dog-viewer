@@ -1,4 +1,4 @@
-import axios, { type Axios } from 'axios'
+import axios, { type Axios, type AxiosError } from 'axios'
 import type { BreedsList, DogApiResponse } from '../types/dog'
 import { constants } from '../utils/constants'
 
@@ -14,54 +14,40 @@ class APIDogs {
     this.axiosInstance = axios.create({
       baseURL: constants.dogApi.baseUrl,
     })
+
+    this.axiosInstance.interceptors.response.use(
+      (response) => response,
+      (error: AxiosError) => {
+        console.error('[Dog API]', error.message)
+        return Promise.reject(error)
+      },
+    )
   }
 
-  async getAllBreeds() {
-    try {
-      const { data } = await this.axiosInstance.get<
-        DogApiResponse<BreedsList>
-      >('/breeds/list/all')
-      return data.message
-    } catch (error) {
-      console.error(error)
-      throw error
+  private async get<T>(path: string): Promise<T> {
+    const { data } = await this.axiosInstance.get<DogApiResponse<T>>(path)
+
+    if (data.status !== 'success') {
+      throw new Error(`Dog API returned status: ${data.status}`)
     }
+
+    return data.message
   }
 
-  async getRandomImage() {
-    try {
-      const { data } = await this.axiosInstance.get<DogApiResponse<string>>(
-        '/breeds/image/random',
-      )
-      return data.message
-    } catch (error) {
-      console.error(error)
-      throw error
-    }
+  getAllBreeds() {
+    return this.get<BreedsList>('/breeds/list/all')
   }
 
-  async getRandomImages(count: number) {
-    try {
-      const { data } = await this.axiosInstance.get<DogApiResponse<string[]>>(
-        `/breeds/image/random/${count}`,
-      )
-      return data.message
-    } catch (error) {
-      console.error(error)
-      throw error
-    }
+  getRandomImage() {
+    return this.get<string>('/breeds/image/random')
   }
 
-  async getRandomBreedImage(breed: string) {
-    try {
-      const { data } = await this.axiosInstance.get<DogApiResponse<string>>(
-        `/breed/${breed}/images/random`,
-      )
-      return data.message
-    } catch (error) {
-      console.error(error)
-      throw error
-    }
+  getRandomImages(count: number) {
+    return this.get<string[]>(`/breeds/image/random/${count}`)
+  }
+
+  getRandomBreedImage(breed: string) {
+    return this.get<string>(`/breed/${breed}/images/random`)
   }
 }
 

@@ -1,23 +1,23 @@
-import { useCallback, useEffect, useState } from 'react'
-import type { Dog, FavoriteDog } from '../types/dog'
-import {
-  createFavoriteId,
-  loadFavorites,
-  saveFavorites,
-} from '../utils/favorites-storage'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import type { Dog } from '../types/dog'
+import { loadFavorites, saveFavorites } from '../utils/favorites-storage'
 
 export function useFavorites() {
-  const [favorites, setFavorites] = useState<FavoriteDog[]>(() => loadFavorites())
+  const [favorites, setFavorites] = useState<Dog[]>(() => loadFavorites())
+  const isInitialMount = useRef(true)
 
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      return
+    }
     saveFavorites(favorites)
   }, [favorites])
 
   const addFavorite = useCallback((dog: Dog) => {
     setFavorites((prev) => {
-      const id = createFavoriteId(dog.imageUrl)
-      if (prev.some((f) => f.id === id)) return prev
-      return [...prev, { ...dog, id }]
+      if (prev.some((f) => f.id === dog.id)) return prev
+      return [...prev, dog]
     })
   }, [])
 
@@ -26,8 +26,7 @@ export function useFavorites() {
   }, [])
 
   const isFavorite = useCallback(
-    (imageUrl: string) =>
-      favorites.some((f) => f.id === createFavoriteId(imageUrl)),
+    (id: string) => favorites.some((f) => f.id === id),
     [favorites],
   )
 

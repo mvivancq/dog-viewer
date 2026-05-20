@@ -1,14 +1,14 @@
-import type { FavoriteDog } from '../../types/dog'
+import type { Dog } from '../../types/dog'
 
 interface FavoriteItemProps {
-  favorite: FavoriteDog
+  dog: Dog
   isSelected?: boolean
-  onSelect: (favorite: FavoriteDog) => void
+  onSelect: (dog: Dog) => void
   onRemove: (id: string) => void
 }
 
 export function FavoriteItem({
-  favorite,
+  dog,
   isSelected,
   onSelect,
   onRemove,
@@ -21,24 +21,25 @@ export function FavoriteItem({
     >
       <button
         type="button"
-        onClick={() => onSelect(favorite)}
+        onClick={() => onSelect(dog)}
         className="flex min-w-0 flex-1 items-center gap-3 text-left"
-        aria-label={`View favorite ${favorite.breed}`}
+        aria-label={`View favorite ${dog.breed}`}
       >
         <img
-          src={favorite.imageUrl}
-          alt={favorite.breed}
+          src={dog.imageUrl}
+          alt={dog.breed}
+          loading="lazy"
           className="h-12 w-12 shrink-0 rounded-md object-cover"
         />
         <span className="truncate text-sm font-medium capitalize text-slate-700">
-          {favorite.breed}
+          {dog.breed}
         </span>
       </button>
       <button
         type="button"
-        onClick={() => onRemove(favorite.id)}
+        onClick={() => onRemove(dog.id)}
         className="shrink-0 px-2 py-1 text-xs text-red-600 hover:underline"
-        aria-label={`Remove ${favorite.breed} from favorites`}
+        aria-label={`Remove ${dog.breed} from favorites`}
       >
         Remove
       </button>

@@ -21,6 +21,7 @@ export function ThumbnailItem({ dog, isSelected, onSelect }: ThumbnailItemProps)
         <img
           src={dog.imageUrl}
           alt={dog.breed}
+          loading="lazy"
           className="aspect-square w-full object-cover"
         />
       </div>

@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback, useState } from 'react'
 import apiDogs from '../api/dogs'
 import type { Dog } from '../types/dog'
-import { constants } from '../utils/constants'
 import { toDog } from '../utils/breed'
+import { constants } from '../utils/constants'
 
 async function fetchGalleryDogs(): Promise<{
   main: Dog
@@ -39,6 +39,11 @@ export function useDogGallery() {
     setSelectedDog(null)
   }, [])
 
+  const refreshGallery = useCallback(async () => {
+    resetSelection()
+    await refetch()
+  }, [refetch, resetSelection])
+
   return {
     mainDog,
     thumbnails: data?.thumbnails ?? [],
@@ -46,8 +51,7 @@ export function useDogGallery() {
     isError,
     error,
     isFetching,
-    refetch,
+    refreshGallery,
     selectDog,
-    resetSelection,
   }
 }

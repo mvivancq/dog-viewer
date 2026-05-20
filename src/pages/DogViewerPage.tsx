@@ -6,6 +6,7 @@ import { ThumbnailItem } from '../components/thumbnails/ThumbnailItem'
 import { LoadingSpinner } from '../components/ui/LoadingSpinner'
 import { useDogGallery } from '../hooks/useDogGallery'
 import { useFavorites } from '../hooks/useFavorites'
+import { getErrorMessage } from '../utils/error-message'
 
 export function DogViewerPage() {
   const {
@@ -13,6 +14,9 @@ export function DogViewerPage() {
     thumbnails,
     isLoading,
     isError,
+    error,
+    isFetching,
+    refreshGallery,
     selectDog,
   } = useDogGallery()
 
@@ -30,26 +34,44 @@ export function DogViewerPage() {
     return (
       <main className="mx-auto max-w-6xl px-4 py-8">
         <p className="py-12 text-center text-red-600" role="alert">
-          Could not load dogs. Please refresh the page.
+          Could not load dogs: {getErrorMessage(error)}
         </p>
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={() => void refreshGallery()}
+            className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            Try again
+          </button>
+        </div>
       </main>
     )
   }
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
-      <header className="mb-8">
+      <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-3xl font-bold text-slate-900">Dog Viewer</h1>
+        <button
+          type="button"
+          onClick={() => void refreshGallery()}
+          disabled={isFetching}
+          className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isFetching ? 'Loading new dogs...' : 'Load new dogs'}
+        </button>
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_280px]">
-        <div className="space-y-8">
+        <div
+          className={`space-y-8 transition-opacity ${isFetching ? 'opacity-60' : ''}`}
+          aria-busy={isFetching}
+        >
           <MainImage
             dog={mainDog}
-            isFavorite={mainDog ? isFavorite(mainDog.imageUrl) : false}
-            onAddFavorite={
-              mainDog ? () => addFavorite(mainDog) : undefined
-            }
+            isFavorite={mainDog ? isFavorite(mainDog.id) : false}
+            onAddFavorite={mainDog ? () => addFavorite(mainDog) : undefined}
           />
 
           <section>
@@ -64,9 +86,9 @@ export function DogViewerPage() {
               <ThumbnailGrid>
                 {thumbnails.map((dog) => (
                   <ThumbnailItem
-                    key={dog.imageUrl}
+                    key={dog.id}
                     dog={dog}
-                    isSelected={dog.imageUrl === mainDog?.imageUrl}
+                    isSelected={dog.id === mainDog?.id}
                     onSelect={selectDog}
                   />
                 ))}
@@ -82,11 +104,11 @@ export function DogViewerPage() {
             </p>
           ) : (
             <ul className="flex flex-col gap-1 overflow-y-auto">
-              {favorites.map((favorite) => (
-                <li key={favorite.id}>
+              {favorites.map((dog) => (
+                <li key={dog.id}>
                   <FavoriteItem
-                    favorite={favorite}
-                    isSelected={favorite.imageUrl === mainDog?.imageUrl}
+                    dog={dog}
+                    isSelected={dog.id === mainDog?.id}
                     onSelect={selectDog}
                     onRemove={removeFavorite}
                   />

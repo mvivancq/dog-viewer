@@ -1,9 +1,8 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { AppLayout } from './components/layout/AppLayout'
+import { queryClient } from './lib/query-client'
 import { DogViewerPage } from './pages/DogViewerPage'
-
-const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
   {

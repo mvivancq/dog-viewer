@@ -1,21 +1,17 @@
-import type { FavoriteDog } from '../types/dog'
+import type { Dog } from '../types/dog'
 import { constants } from './constants'
+import { parseStoredDogs } from './validate-dog'
 
-export function loadFavorites(): FavoriteDog[] {
+export function loadFavorites(): Dog[] {
   try {
     const raw = localStorage.getItem(constants.storage.favoritesKey)
     if (!raw) return []
-    const parsed = JSON.parse(raw) as FavoriteDog[]
-    return Array.isArray(parsed) ? parsed : []
+    return parseStoredDogs(JSON.parse(raw))
   } catch {
     return []
   }
 }
 
-export function saveFavorites(favorites: FavoriteDog[]): void {
+export function saveFavorites(favorites: Dog[]): void {
   localStorage.setItem(constants.storage.favoritesKey, JSON.stringify(favorites))
-}
-
-export function createFavoriteId(dog: FavoriteDog['imageUrl']): string {
-  return dog
 }
