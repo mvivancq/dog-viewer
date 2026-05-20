@@ -2,6 +2,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { AppLayout } from './components/layout/AppLayout'
 import { queryClient } from './lib/query-client'
+import { AboutPage } from './pages/AboutPage'
 import { DogViewerPage } from './pages/DogViewerPage'
 
 const router = createBrowserRouter([
@@ -11,6 +12,10 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <DogViewerPage />,
+      },
+      {
+        path: '/about',
+        element: <AboutPage />,
       },
     ],
   },
